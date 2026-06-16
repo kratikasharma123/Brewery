@@ -8,6 +8,7 @@ import {
   resetInventoryState,
 } from '../features/inventory/inventorySlice';
 import { sanitizeDigitsInput } from '../utils/numberValidation';
+import { apiUrl } from '../utils/apiClient';
 import {
   AlertTriangle,
   CheckCircle,
@@ -147,7 +148,7 @@ const InventoryPage = () => {
   };
 
   const handleExportCsv = async () => {
-    const response = await fetch('/api/inventory/export/csv', {
+    const response = await fetch(apiUrl('/api/inventory/export/csv'), {
       headers: { Authorization: `Bearer ${user?.token}` },
     });
     const blob = await response.blob();

@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { apiUrl } from '../../utils/apiClient';
 
 const initialState = {
   orders: [],
@@ -12,7 +13,7 @@ export const fetchOrders = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user?.token;
-      const response = await fetch('/api/orders', {
+      const response = await fetch(apiUrl('/api/orders'), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -35,7 +36,7 @@ export const cancelOrder = createAsyncThunk(
   async (orderId, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user?.token;
-      const response = await fetch(`/api/orders/${orderId}/cancel`, {
+      const response = await fetch(apiUrl(`/api/orders/${orderId}/cancel`), {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${token}`,

@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { apiUrl } from '../../utils/apiClient';
 
 const CART_STORAGE_KEY = 'brewery_cart_items';
 
@@ -41,7 +42,7 @@ export const placeCodOrder = createAsyncThunk(
         quantity: item.cartQty,
       }));
 
-      const response = await fetch('/api/orders', {
+      const response = await fetch(apiUrl('/api/orders'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
