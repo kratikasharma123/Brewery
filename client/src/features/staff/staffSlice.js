@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios, { apiUrl } from '../../utils/apiClient';
 
 const initialState = {
   staff: [],
@@ -24,7 +24,7 @@ export const fetchStaff = createAsyncThunk('staff/fetchAll', async (filters = {}
     Object.entries(filters).forEach(([key, value]) => {
       if (value) params.append(key, value);
     });
-    const response = await axios.get(`/api/staff?${params.toString()}`, authConfig(thunkAPI.getState));
+    const response = await axios.get(apiUrl(`/api/staff?${params.toString()}`), authConfig(thunkAPI.getState));
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(getErrorMessage(error));
@@ -33,7 +33,7 @@ export const fetchStaff = createAsyncThunk('staff/fetchAll', async (filters = {}
 
 export const createStaff = createAsyncThunk('staff/create', async (staffData, thunkAPI) => {
   try {
-    const response = await axios.post('/api/staff', staffData, authConfig(thunkAPI.getState));
+    const response = await axios.post(apiUrl('/api/staff'), staffData, authConfig(thunkAPI.getState));
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(getErrorMessage(error));
@@ -42,7 +42,7 @@ export const createStaff = createAsyncThunk('staff/create', async (staffData, th
 
 export const updateStaff = createAsyncThunk('staff/update', async ({ id, staffData }, thunkAPI) => {
   try {
-    const response = await axios.put(`/api/staff/${id}`, staffData, authConfig(thunkAPI.getState));
+    const response = await axios.put(apiUrl(`/api/staff/${id}`), staffData, authConfig(thunkAPI.getState));
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(getErrorMessage(error));
@@ -51,7 +51,7 @@ export const updateStaff = createAsyncThunk('staff/update', async ({ id, staffDa
 
 export const deleteStaff = createAsyncThunk('staff/delete', async (id, thunkAPI) => {
   try {
-    await axios.delete(`/api/staff/${id}`, authConfig(thunkAPI.getState));
+    await axios.delete(apiUrl(`/api/staff/${id}`), authConfig(thunkAPI.getState));
     return id;
   } catch (error) {
     return thunkAPI.rejectWithValue(getErrorMessage(error));
@@ -60,7 +60,7 @@ export const deleteStaff = createAsyncThunk('staff/delete', async (id, thunkAPI)
 
 export const addAttendance = createAsyncThunk('staff/addAttendance', async ({ id, attendanceData }, thunkAPI) => {
   try {
-    const response = await axios.post(`/api/staff/${id}/attendance`, attendanceData, authConfig(thunkAPI.getState));
+    const response = await axios.post(apiUrl(`/api/staff/${id}/attendance`), attendanceData, authConfig(thunkAPI.getState));
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(getErrorMessage(error));

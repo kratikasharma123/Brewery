@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios, { apiUrl } from '../../utils/apiClient';
 
 const initialState = {
   summary: null,
@@ -11,7 +11,7 @@ const initialState = {
 export const fetchDashboardSummary = createAsyncThunk('dashboard/fetchSummary', async (_, thunkAPI) => {
   try {
     const token = thunkAPI.getState().auth.user?.token;
-    const response = await axios.get('/api/dashboard/summary', {
+    const response = await axios.get(apiUrl('/api/dashboard/summary'), {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios, { apiUrl } from '../../utils/apiClient';
 
 const initialState = {
   items: [],
@@ -37,7 +37,7 @@ export const fetchInventory = createAsyncThunk(
         url += `?${params.join('&')}`;
       }
 
-      const response = await axios.get(url, config);
+      const response = await axios.get(apiUrl(url), config);
       return response.data;
     } catch (error) {
       const message =
@@ -57,7 +57,7 @@ export const createItem = createAsyncThunk(
   async (itemData, thunkAPI) => {
     try {
       const config = getAuthConfig(thunkAPI.getState);
-      const response = await axios.post('/api/inventory', itemData, config);
+      const response = await axios.post(apiUrl('/api/inventory'), itemData, config);
       return response.data;
     } catch (error) {
       const message =
@@ -77,7 +77,7 @@ export const updateItem = createAsyncThunk(
   async ({ id, itemData }, thunkAPI) => {
     try {
       const config = getAuthConfig(thunkAPI.getState);
-      const response = await axios.put(`/api/inventory/${id}`, itemData, config);
+      const response = await axios.put(apiUrl(`/api/inventory/${id}`), itemData, config);
       return response.data;
     } catch (error) {
       const message =
@@ -97,7 +97,7 @@ export const deleteItem = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const config = getAuthConfig(thunkAPI.getState);
-      await axios.delete(`/api/inventory/${id}`, config);
+      await axios.delete(apiUrl(`/api/inventory/${id}`), config);
       return id;
     } catch (error) {
       const message =

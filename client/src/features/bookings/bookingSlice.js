@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios, { apiUrl } from '../../utils/apiClient';
 
 const initialState = {
   bookings: [],
@@ -36,7 +36,7 @@ export const fetchBookings = createAsyncThunk(
         url += `?${params.join('&')}`;
       }
 
-      const response = await axios.get(url, config);
+      const response = await axios.get(apiUrl(url), config);
       return response.data;
     } catch (error) {
       const message =
@@ -56,7 +56,7 @@ export const createBooking = createAsyncThunk(
   async (bookingData, thunkAPI) => {
     try {
       const config = getAuthConfig(thunkAPI.getState);
-      const response = await axios.post('/api/bookings', bookingData, config);
+      const response = await axios.post(apiUrl('/api/bookings'), bookingData, config);
       return response.data;
     } catch (error) {
       const message =
@@ -76,7 +76,7 @@ export const updateBooking = createAsyncThunk(
   async ({ id, bookingData }, thunkAPI) => {
     try {
       const config = getAuthConfig(thunkAPI.getState);
-      const response = await axios.put(`/api/bookings/${id}`, bookingData, config);
+      const response = await axios.put(apiUrl(`/api/bookings/${id}`), bookingData, config);
       return response.data;
     } catch (error) {
       const message =
@@ -96,7 +96,7 @@ export const deleteBooking = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const config = getAuthConfig(thunkAPI.getState);
-      await axios.delete(`/api/bookings/${id}`, config);
+      await axios.delete(apiUrl(`/api/bookings/${id}`), config);
       return id;
     } catch (error) {
       const message =
