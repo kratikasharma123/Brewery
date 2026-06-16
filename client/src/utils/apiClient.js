@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-export const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+const DEFAULT_API_BASE_URL = 'https://brewery-backend-u4hx.onrender.com';
+
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || DEFAULT_API_BASE_URL).replace(/\/$/, '');
 
 export const apiUrl = (path) => {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
