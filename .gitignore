@@ -1,0 +1,13 @@
+node_modules/
+client/node_modules/
+server/node_modules/
+client/dist/
+
+.env
+*.env
+server/.env
+
+*.log
+client/*.log
+server/*.log
+.vercel/
