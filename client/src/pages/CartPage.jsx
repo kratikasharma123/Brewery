@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
-  BadgeIndianRupee,
+  BadgeDollarSign,
   CheckCircle2,
   Image as ImageIcon,
   Loader2,
@@ -35,7 +35,7 @@ const CartPage = () => {
     notes: '',
   });
 
-  const formatCurrency = (amount) => `INR ${Number(amount || 0).toLocaleString('en-IN')}`;
+  const formatCurrency = (amount) => `$${Number(amount || 0).toLocaleString('en-US')}`;
 
   const handleQuantityChange = (id, value) => {
     const qty = Number(value);
@@ -293,7 +293,7 @@ const CartPage = () => {
               <div className="flex items-center justify-between border-t border-slate-800 pt-4 text-base">
                 <span className="font-bold text-slate-200">Total</span>
                 <span className="font-extrabold text-amber-300 flex items-center gap-1">
-                  <BadgeIndianRupee className="h-4 w-4" />
+                  <BadgeDollarSign className="h-4 w-4" />
                   {formatCurrency(subtotal)}
                 </span>
               </div>

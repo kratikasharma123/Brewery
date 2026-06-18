@@ -8,12 +8,11 @@ import {
   CalendarCheck,
   CheckCircle2,
   ClipboardList,
-  MapPin,
   PackageCheck,
   ShieldCheck,
-  Sparkles,
   Users,
 } from 'lucide-react';
+import Footer from '../components/Footer';
 import { getDashboardPath } from '../utils/authRoutes';
 import heroImage from '../assets/brewery-home-hero.png';
 
@@ -43,20 +42,20 @@ const features = [
 const plans = [
   {
     name: 'Starter',
-    price: 'INR 2,499',
+    price: '$29',
     description: 'For small breweries organizing inventory and bookings.',
     highlights: ['Inventory dashboard', 'Booking calendar', 'Customer accounts'],
   },
   {
     name: 'Operations',
-    price: 'INR 6,499',
+    price: '$79',
     description: 'For growing teams that need staff controls and deeper order tracking.',
     highlights: ['Staff management', 'Order workflows', 'Performance insights'],
     featured: true,
   },
   {
     name: 'Scale',
-    price: 'INR 12,499',
+    price: '$149',
     description: 'For multi-location teams coordinating a bigger operation.',
     highlights: ['Advanced permissions', 'Priority support', 'Custom reporting'],
   },
@@ -183,10 +182,6 @@ const Home = () => {
 
         <div className="relative z-10 mx-auto flex min-h-[calc(92vh-6rem)] max-w-7xl items-center px-5 py-14 sm:px-8">
           <div className="max-w-3xl">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-md border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-amber-300">
-              <Sparkles className="h-4 w-4" />
-              Inventory, bookings, orders, and staff in one system
-            </div>
             <h1 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">
               Brewery command center before sign in.
             </h1>
@@ -378,77 +373,7 @@ const Home = () => {
         </div>
       </section>
 
-      <footer className="border-t border-slate-800 bg-slate-900/70 text-slate-400">
-        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[1.5fr_0.9fr_0.9fr_0.9fr]">
-          <div>
-            <div className="flex items-center gap-3">
-              <span className="grid h-12 w-12 place-items-center rounded-xl bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20">
-                <Beer className="h-6 w-6" />
-              </span>
-              <p className="text-2xl font-black text-slate-50">Brewery Inventory</p>
-            </div>
-
-            <div className="mt-5 flex flex-wrap items-center gap-4 text-xs font-extrabold uppercase tracking-[0.22em]">
-              <span className="inline-flex items-center gap-2 text-amber-300">
-                <span className="h-4 w-4 rounded bg-amber-500/80" />
-                Brewery
-              </span>
-              <span className="text-sky-300">Line.us</span>
-              <span className="text-slate-500">Inventory & Booking Platform</span>
-            </div>
-
-            <p className="mt-8 max-w-sm text-base font-medium leading-8 text-slate-500">
-              The all-in-one inventory and booking platform for craft breweries and small retailers. Built for local
-              businesses, by operators who get it.
-            </p>
-
-            <div className="mt-8 flex gap-3">
-              {['X', 'in', 'ig'].map((label) => (
-                <button
-                  key={label}
-                  type="button"
-                  className="grid h-11 w-11 place-items-center rounded-lg border border-slate-700 bg-slate-800/70 text-slate-500 transition hover:border-amber-500/40 hover:text-amber-300"
-                  aria-label={label}
-                >
-                  <span className="text-sm font-black uppercase">{label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {[
-            ['Product', ['Features', 'Pricing', 'Reviews', 'Changelog', 'Integrations']],
-            ['Company', ['About Us', 'Blog', 'Careers', 'Press', 'Contact']],
-            ['Legal', ['Terms & Conditions', 'Privacy Policy', 'Refund Policy', 'Cookie Policy', 'Security']],
-          ].map(([heading, items]) => (
-            <div key={heading}>
-              <p className="text-sm font-extrabold uppercase tracking-[0.22em] text-slate-50">{heading}</p>
-              <div className="mt-8 grid gap-6">
-                {items.map((item) => (
-                  <span key={item} className="text-base font-medium text-slate-500">
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="border-t border-slate-800">
-          <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-8 text-sm font-medium text-slate-500 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
-            <p>© 2026 Brewery Inventory. All Rights Reserved.</p>
-            <p className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-amber-400" />
-              1021 E Lincolnway #9869, Cheyenne, WY 82001, USA
-            </p>
-            <div className="flex gap-7">
-              <span>Terms</span>
-              <span>Privacy</span>
-              <span>Refunds</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 };

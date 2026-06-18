@@ -73,7 +73,7 @@ const staffProfileSchema = new mongoose.Schema(
         type: String,
         trim: true,
         uppercase: true,
-        default: 'INR',
+        default: 'USD',
       },
       payCycle: {
         type: String,
@@ -94,6 +94,11 @@ const staffProfileSchema = new mongoose.Schema(
       },
     },
     attendance: [attendanceSchema],
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      index: true,
+    },
   },
   { timestamps: true }
 );

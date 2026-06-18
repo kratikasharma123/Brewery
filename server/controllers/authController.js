@@ -32,6 +32,14 @@ export const registerUser = async (req, res, next) => {
       throw new Error('Password must be at least 8 characters');
     }
 
+    const requestedRole = cleanString(req.body.role || 'Customer');
+    const allowedRoles = ['Admin', 'Customer'];
+
+    if (!allowedRoles.includes(requestedRole)) {
+      res.status(400);
+      throw new Error('Please select Admin or Customer');
+    }
+
     const userExists = await User.findOne({ email: cleanString(email).toLowerCase() });
 
     if (userExists) {
@@ -43,7 +51,7 @@ export const registerUser = async (req, res, next) => {
       name: cleanString(name),
       email: cleanString(email).toLowerCase(),
       password,
-      role: 'Customer',
+      role: requestedRole,
     });
 
     if (user) {
@@ -58,6 +66,41 @@ export const registerUser = async (req, res, next) => {
       res.status(400);
       throw new Error('Invalid user data');
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Choose account role after registration
+// @route   PATCH /api/auth/role
+// @access  Private
+export const chooseUserRole = async (req, res, next) => {
+  try {
+    const role = cleanString(req.body.role);
+    const allowedRoles = ['Admin', 'Customer'];
+
+    if (!allowedRoles.includes(role)) {
+      res.status(400);
+      throw new Error('Please select Admin or Customer');
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      res.status(404);
+      throw new Error('User not found');
+    }
+
+    user.role = role;
+    await user.save();
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id),
+    });
   } catch (error) {
     next(error);
   }

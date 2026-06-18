@@ -14,12 +14,18 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import HomeRedirect from './pages/HomeRedirect';
 import Home from './pages/Home';
+import ContactPage from './pages/ContactPage';
+import BlogPage from './pages/BlogPage';
+import ChangelogPage from './pages/ChangelogPage';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/changelog" element={<ChangelogPage />} />
+        <Route path="/contact" element={<ContactPage />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

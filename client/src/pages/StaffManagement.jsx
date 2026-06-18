@@ -8,7 +8,7 @@ import {
   updateStaff,
 } from '../features/staff/staffSlice';
 import {
-  BadgeIndianRupee,
+  BadgeDollarSign,
   CalendarCheck,
   Edit2,
   Loader2,
@@ -34,7 +34,7 @@ const emptyForm = {
   designation: '',
   shift: 'General',
   salaryAmount: 0,
-  salaryCurrency: 'INR',
+  salaryCurrency: 'USD',
   payCycle: 'Monthly',
   emergencyContactName: '',
   emergencyContactPhone: '',
@@ -103,7 +103,7 @@ const StaffManagement = () => {
       designation: member.designation || '',
       shift: member.shift || 'General',
       salaryAmount: member.salary?.amount || 0,
-      salaryCurrency: member.salary?.currency || 'INR',
+      salaryCurrency: member.salary?.currency || 'USD',
       payCycle: member.salary?.payCycle || 'Monthly',
       emergencyContactName: member.emergencyContact?.name || '',
       emergencyContactPhone: member.emergencyContact?.phone || '',
@@ -166,9 +166,9 @@ const StaffManagement = () => {
           <p className="mt-1 text-3xl font-extrabold text-slate-100">{totals.active}</p>
         </div>
         <div className="glass-panel rounded-lg border border-slate-800 p-5">
-          <BadgeIndianRupee className="mb-3 h-5 w-5 text-emerald-400" />
+          <BadgeDollarSign className="mb-3 h-5 w-5 text-emerald-400" />
           <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Monthly Payroll</p>
-          <p className="mt-1 text-3xl font-extrabold text-slate-100">₹{totals.payroll.toLocaleString('en-IN')}</p>
+          <p className="mt-1 text-3xl font-extrabold text-slate-100">${totals.payroll.toLocaleString('en-US')}</p>
         </div>
         <form onSubmit={submitAttendance} className="glass-panel rounded-lg border border-slate-800 p-5">
           <div className="mb-3 flex items-center gap-2">

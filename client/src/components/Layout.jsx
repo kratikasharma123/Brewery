@@ -13,7 +13,6 @@ import {
   X,
   UsersRound,
   ClipboardList,
-  MapPin,
 } from 'lucide-react';
 import { useState } from 'react';
 import { getDashboardPath } from '../utils/authRoutes';
@@ -207,77 +206,6 @@ const Layout = ({ children }) => {
             <div className="flex-1">
             {children}
             </div>
-
-            <footer className="mt-12 overflow-hidden rounded-lg border border-slate-800 bg-slate-900/70 text-slate-400 shadow-2xl shadow-slate-950/40">
-              <div className="grid gap-12 px-6 py-14 lg:grid-cols-[1.5fr_0.9fr_0.9fr_0.9fr]">
-                <div>
-                  <div className="flex items-center gap-3">
-                    <span className="grid h-12 w-12 place-items-center rounded-xl bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20">
-                      <Beer className="h-6 w-6" />
-                    </span>
-                    <p className="text-2xl font-black text-slate-50">Brewery Inventory</p>
-                  </div>
-
-                  <div className="mt-5 flex flex-wrap items-center gap-4 text-xs font-extrabold uppercase tracking-[0.22em]">
-                    <span className="inline-flex items-center gap-2 text-amber-300">
-                      <span className="h-4 w-4 rounded bg-amber-500/80" />
-                      Brewery
-                    </span>
-                    <span className="text-sky-300">Line.us</span>
-                    <span className="text-slate-500">Inventory & Booking Platform</span>
-                  </div>
-
-                  <p className="mt-8 max-w-sm text-base font-medium leading-8 text-slate-500">
-                    The all-in-one inventory and booking platform for craft breweries and small retailers. Built for local businesses, by operators who get it.
-                  </p>
-
-                  <div className="mt-8 flex gap-3">
-                    {['X', 'in', 'ig'].map((label) => (
-                      <button
-                        key={label}
-                        type="button"
-                        className="grid h-11 w-11 place-items-center rounded-lg border border-slate-700 bg-slate-800/70 text-slate-500 transition hover:border-amber-500/40 hover:text-amber-300"
-                        aria-label={label}
-                      >
-                        <span className="text-sm font-black uppercase">{label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {[
-                  ['Product', ['Features', 'Pricing', 'Reviews', 'Changelog', 'Integrations']],
-                  ['Company', ['About Us', 'Blog', 'Careers', 'Press', 'Contact']],
-                  ['Legal', ['Terms & Conditions', 'Privacy Policy', 'Refund Policy', 'Cookie Policy', 'Security']],
-                ].map(([heading, items]) => (
-                  <div key={heading}>
-                    <p className="text-sm font-extrabold uppercase tracking-[0.22em] text-slate-50">{heading}</p>
-                    <div className="mt-8 grid gap-6">
-                      {items.map((item) => (
-                        <span key={item} className="text-base font-medium text-slate-500">
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="border-t border-slate-800">
-                <div className="flex flex-col gap-5 px-6 py-8 text-sm font-medium text-slate-500 lg:flex-row lg:items-center lg:justify-between">
-                  <p>© 2026 Brewery Inventory. All Rights Reserved.</p>
-                  <p className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-amber-400" />
-                    1021 E Lincolnway #9869, Cheyenne, WY 82001, USA
-                  </p>
-                  <div className="flex gap-7">
-                    <span>Terms</span>
-                    <span>Privacy</span>
-                    <span>Refunds</span>
-                  </div>
-                </div>
-              </div>
-            </footer>
           </div>
         </div>
       </main>

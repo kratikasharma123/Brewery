@@ -12,6 +12,7 @@ const CustomerShop = () => {
   const [category, setCategory] = useState('');
 
   const categories = [...new Set(items.map((item) => item.category))];
+  const formatCurrency = (amount) => `$${Number(amount || 0).toLocaleString('en-US')}`;
 
   const handleAddToCart = (item) => {
     dispatch(addToCart({
@@ -120,6 +121,10 @@ const CustomerShop = () => {
                 </span>
               </div>
               <p className="text-sm text-slate-400 mb-4 line-clamp-3">{item.description || 'No description available.'}</p>
+              <div className="mb-4 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3">
+                <p className="text-xs font-extrabold uppercase tracking-widest text-amber-300">Price</p>
+                <p className="mt-1 text-2xl font-black text-slate-50">{formatCurrency(item.price)}</p>
+              </div>
               <div className="flex items-center justify-between text-sm text-slate-400 mb-6">
                 <div>
                   <p>Qty: <span className="text-slate-100 font-semibold">{item.quantity} {item.unit}</span></p>

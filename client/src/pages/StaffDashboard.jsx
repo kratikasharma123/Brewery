@@ -34,7 +34,7 @@ const StaffDashboard = ({ user, bookings = [], items = [], orders = [] }) => {
   const codPendingOrders = orders.filter((order) => order.paymentMethod === 'COD' && order.paymentStatus === 'Pending').length;
   const highlyDemandedDrinks = getHighlyDemandedDrinks(orders, 4);
   const maxDemandQuantity = Math.max(...highlyDemandedDrinks.map((drink) => drink.quantity), 1);
-  const formatCurrency = (amount) => `INR ${Number(amount || 0).toLocaleString('en-IN')}`;
+  const formatCurrency = (amount) => `$${Number(amount || 0).toLocaleString('en-US')}`;
 
   const handleConfirm = async (id) => {
     await dispatch(updateBooking({ id, bookingData: { status: 'Confirmed' } }));

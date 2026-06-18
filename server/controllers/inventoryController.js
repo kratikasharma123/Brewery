@@ -37,6 +37,7 @@ export const getInventory = asyncHandler(async (req, res) => {
       query.barcode = cleanString(barcode);
     }
 
+
     const items = await Inventory.find(query)
       .populate('lastUpdatedBy', 'name email')
       .sort({ updatedAt: -1 });

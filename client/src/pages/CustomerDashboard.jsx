@@ -35,6 +35,7 @@ const CustomerDashboard = ({ user, bookings = [], items = [] }) => {
   const inStockCount = items.filter((item) => item.status === 'In Stock').length;
   const lowStockCount = items.filter((item) => item.status === 'Low Stock').length;
   const cartCount = cartItems.reduce((total, item) => total + (item.cartQty || 1), 0);
+  const formatCurrency = (amount) => `$${Number(amount || 0).toLocaleString('en-US')}`;
 
   const handleAddToCart = (item) => {
     dispatch(addToCart({
@@ -243,11 +244,15 @@ const CustomerDashboard = ({ user, bookings = [], items = [] }) => {
                   </p>
 
                   <div className="mb-5 grid grid-cols-2 gap-3 text-sm">
+                    <div className="rounded-md border border-amber-500/20 bg-amber-500/10 p-3">
+                      <p className="text-xs uppercase tracking-widest text-amber-300">Price</p>
+                      <p className="mt-1 font-black text-slate-50">{formatCurrency(item.price)}</p>
+                    </div>
                     <div className="rounded-md bg-slate-950/50 p-3">
                       <p className="text-xs uppercase tracking-widest text-slate-500">Quantity</p>
                       <p className="mt-1 font-bold text-slate-100">{item.quantity} {item.unit}</p>
                     </div>
-                    <div className="rounded-md bg-slate-950/50 p-3">
+                    <div className="rounded-md bg-slate-950/50 p-3 col-span-2">
                       <p className="text-xs uppercase tracking-widest text-slate-500">Supplier</p>
                       <p className="mt-1 truncate font-bold text-slate-100" title={item.supplier || 'N/A'}>{item.supplier || 'N/A'}</p>
                     </div>

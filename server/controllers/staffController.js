@@ -95,13 +95,14 @@ export const createStaff = asyncHandler(async (req, res) => {
     shift: req.body.shift || 'General',
     salary: {
       amount: validateNumber(req.body.salaryAmount || 0, 'salaryAmount', { min: 0 }),
-      currency: cleanString(req.body.salaryCurrency || 'INR').toUpperCase(),
+      currency: cleanString(req.body.salaryCurrency || 'USD').toUpperCase(),
       payCycle: req.body.payCycle || 'Monthly',
     },
     emergencyContact: {
       name: cleanString(req.body.emergencyContactName),
       phone: cleanString(req.body.emergencyContactPhone),
     },
+    createdBy: req.user._id,
   });
 
   await writeAuditLog({ req, action: 'staff.created', entity: 'StaffProfile', entityId: profile._id });

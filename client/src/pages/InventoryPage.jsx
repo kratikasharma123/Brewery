@@ -177,7 +177,7 @@ const InventoryPage = () => {
     }
   };
 
-  const formatCurrency = (amount) => `INR ${Number(amount || 0).toLocaleString('en-IN')}`;
+  const formatCurrency = (amount) => `$${Number(amount || 0).toLocaleString('en-US')}`;
   const canModify = user?.role === 'Admin' || user?.role === 'Staff';
   const canDelete = user?.role === 'Admin';
   const totalItems = items.length;

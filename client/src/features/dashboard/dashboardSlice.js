@@ -11,9 +11,11 @@ const initialState = {
 export const fetchDashboardSummary = createAsyncThunk('dashboard/fetchSummary', async (_, thunkAPI) => {
   try {
     const token = thunkAPI.getState().auth.user?.token;
+    console.log(token,"token")
     const response = await axios.get(apiUrl('/api/dashboard/summary'), {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log(response,"response")
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response?.data?.message || error.message || error.toString());

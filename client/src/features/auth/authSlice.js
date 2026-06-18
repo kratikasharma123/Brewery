@@ -34,6 +34,40 @@ export const register = createAsyncThunk(
   }
 );
 
+// Choose user role after registration
+export const chooseRole = createAsyncThunk(
+  'auth/chooseRole',
+  async (role, thunkAPI) => {
+    const user = thunkAPI.getState().auth.user;
+
+    if (!user) {
+      return thunkAPI.rejectWithValue('Please register before choosing a role');
+    }
+
+    try {
+      const response = await axios.patch(
+        apiUrl('/api/auth/role'),
+        { role },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+
+      if (response.data) {
+        localStorage.setItem('user', JSON.stringify(response.data));
+      }
+
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        'Unable to save selected role. Please restart/deploy the backend and try again.';
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // Login user
 export const login = createAsyncThunk(
   'auth/login',
@@ -104,10 +138,27 @@ export const authSlice = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload;
+        const isExistingUser = String(action.payload || '').toLowerCase().includes('user already exists');
+        state.isError = !isExistingUser;
+        state.message = isExistingUser ? '' : action.payload;
         state.user = null;
         localStorage.removeItem('user');
+      })
+      // Choose Role
+      .addCase(chooseRole.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.message = '';
+      })
+      .addCase(chooseRole.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+      })
+      .addCase(chooseRole.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
       })
       // Login
       .addCase(login.pending, (state) => {

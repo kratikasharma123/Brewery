@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  BadgeIndianRupee,
+  BadgeDollarSign,
   Ban,
   CheckCircle,
   ClipboardList,
@@ -31,7 +31,7 @@ const OrdersPage = () => {
     dispatch(fetchOrders());
   }, [dispatch]);
 
-  const formatCurrency = (amount) => `INR ${Number(amount || 0).toLocaleString('en-IN')}`;
+  const formatCurrency = (amount) => `$${Number(amount || 0).toLocaleString('en-US')}`;
 
   const visibleOrders = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -173,7 +173,7 @@ const OrdersPage = () => {
           </div>
 
           <div className="rounded-lg border border-white/10 bg-white/[0.04] p-5">
-            <BadgeIndianRupee className="mb-4 h-6 w-6 text-emerald-300" />
+            <BadgeDollarSign className="mb-4 h-6 w-6 text-emerald-300" />
             <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Order value</p>
             <p className="mt-2 text-3xl font-extrabold text-slate-50">{formatCurrency(totalRevenue)}</p>
             <p className="mt-2 text-xs text-slate-500">Total value from all customer product orders.</p>
