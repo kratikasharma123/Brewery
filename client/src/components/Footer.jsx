@@ -21,11 +21,11 @@ const footerGroups = [
   {
     heading: 'Legal',
     links: [
-      { label: 'Terms & Conditions', disabled: true },
-      { label: 'Privacy Policy', disabled: true },
-      { label: 'Refund Policy', disabled: true },
-      { label: 'Cookie Policy', disabled: true },
-      { label: 'Security', disabled: true },
+      { label: 'Terms & Conditions', to: '/terms' },
+      { label: 'Privacy Policy', to: '/privacy' },
+      { label: 'Refund Policy', to: '/refund' },
+      { label: 'Cookie Policy', to: '/cookies' },
+      { label: 'Security', to: '/security' },
     ],
   },
 ];
@@ -116,11 +116,15 @@ const Footer = () => {
             1021 E Lincolnway #9869, Cheyenne, WY 82001, USA
           </a>
           <div className="flex gap-7">
-            {['Terms', 'Privacy', 'Refunds'].map((label) => (
-              <span key={label} className="cursor-not-allowed text-slate-600">
-                {label}
-              </span>
-            ))}
+            <Link to="/terms" className="transition hover:text-amber-300">
+              Terms
+            </Link>
+            <Link to="/privacy" className="transition hover:text-amber-300">
+              Privacy
+            </Link>
+            <Link to="/refund" className="transition hover:text-amber-300">
+              Refunds
+            </Link>
           </div>
         </div>
       </div>

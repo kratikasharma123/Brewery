@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
@@ -17,14 +18,40 @@ import Home from './pages/Home';
 import ContactPage from './pages/ContactPage';
 import BlogPage from './pages/BlogPage';
 import ChangelogPage from './pages/ChangelogPage';
+import TermsPage from './pages/TermsPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import RefundPolicyPage from './pages/RefundPolicyPage';
+import CookiePolicyPage from './pages/CookiePolicyPage';
+import SecurityPage from './pages/SecurityPage';
+
+const ScrollToTop = () => {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname, hash]);
+
+  return null;
+};
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/changelog" element={<ChangelogPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/refund" element={<RefundPolicyPage />} />
+        <Route path="/cookies" element={<CookiePolicyPage />} />
+        <Route path="/security" element={<SecurityPage />} />
         <Route path="/contact" element={<ContactPage />} />
 
         <Route path="/login" element={<Login />} />
