@@ -47,128 +47,6 @@ const chartTooltipStyle = {
   color: '#f8fafc',
 };
 
-const demoInventoryItems = [
-  {
-    _id: 'demo-inventory-1',
-    name: 'Golden Lager',
-    category: 'Packaged',
-    quantity: 120,
-    unit: 'bottles',
-    price: 7,
-    reorderLevel: 24,
-    status: 'In Stock',
-    supplier: 'Demo Brewery Co.',
-  },
-  {
-    _id: 'demo-inventory-2',
-    name: 'Amber Ale',
-    category: 'Packaged',
-    quantity: 18,
-    unit: 'cans',
-    price: 8,
-    reorderLevel: 25,
-    status: 'Low Stock',
-    supplier: 'Demo Brewery Co.',
-  },
-  {
-    _id: 'demo-inventory-3',
-    name: 'Roasted Barley',
-    category: 'Raw Material',
-    quantity: 0,
-    unit: 'kg',
-    price: 4,
-    reorderLevel: 12,
-    status: 'Out of Stock',
-    supplier: 'Demo Grain Supply',
-  },
-  {
-    _id: 'demo-inventory-4',
-    name: 'IPA Keg',
-    category: 'In-Progress',
-    quantity: 42,
-    unit: 'kegs',
-    price: 95,
-    reorderLevel: 10,
-    status: 'In Stock',
-    supplier: 'Demo Taproom',
-  },
-];
-
-const demoBookings = [
-  {
-    _id: 'demo-booking-1',
-    customerName: 'Alex Morgan',
-    customerEmail: 'alex@example.com',
-    type: 'Tasting',
-    date: new Date().toISOString(),
-    timeSlot: '4:00 PM',
-    guestsCount: 4,
-    status: 'Confirmed',
-  },
-  {
-    _id: 'demo-booking-2',
-    customerName: 'Jamie Lee',
-    customerEmail: 'jamie@example.com',
-    type: 'Tour',
-    date: new Date().toISOString(),
-    timeSlot: '2:00 PM',
-    guestsCount: 6,
-    status: 'Pending',
-  },
-  {
-    _id: 'demo-booking-3',
-    customerName: 'Taylor Smith',
-    customerEmail: 'taylor@example.com',
-    type: 'Brewery Event',
-    date: new Date().toISOString(),
-    timeSlot: '6:00 PM',
-    guestsCount: 12,
-    status: 'Confirmed',
-  },
-];
-
-const demoOrders = [
-  {
-    _id: 'demo-order-1',
-    paymentMethod: 'COD',
-    paymentStatus: 'Pending',
-    orderStatus: 'Placed',
-    total: 210,
-    subtotal: 210,
-    items: [
-      { name: 'Golden Lager', quantity: 18, unit: 'bottles', price: 7, lineTotal: 126 },
-      { name: 'Amber Ale', quantity: 10, unit: 'cans', price: 8, lineTotal: 80 },
-    ],
-  },
-  {
-    _id: 'demo-order-2',
-    paymentMethod: 'COD',
-    paymentStatus: 'Paid',
-    orderStatus: 'Delivered',
-    total: 285,
-    subtotal: 285,
-    items: [
-      { name: 'IPA Keg', quantity: 3, unit: 'kegs', price: 95, lineTotal: 285 },
-    ],
-  },
-];
-
-const buildDemoSummary = (items, bookings, orders) => ({
-  totals: {
-    totalRevenue: orders.reduce((sum, order) => sum + Number(order.total || 0), 0),
-    totalBookings: bookings.length,
-    inventoryValue: items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.price || 0), 0),
-    activeCustomers: 12,
-    activeStaff: 4,
-    lowStockProducts: items.filter((item) => item.status === 'Low Stock' || item.status === 'Out of Stock').length,
-  },
-  bookingTrends: [
-    { month: '2026-04', bookings: 6, guests: 28, revenue: 840 },
-    { month: '2026-05', bookings: 9, guests: 43, revenue: 1290 },
-    { month: '2026-06', bookings: bookings.length, guests: bookings.reduce((sum, booking) => sum + Number(booking.guestsCount || 0), 0), revenue: orders.reduce((sum, order) => sum + Number(order.total || 0), 0) },
-  ],
-});
-
 const Dashboard = () => {
   const dispatch = useDispatch();
 
@@ -178,13 +56,12 @@ const Dashboard = () => {
   const { summary: dashboardSummary } = useSelector((state) => state.dashboard);
   const { orders: orderItems } = useSelector((state) => state.orders);
   const role = user?.role?.toLowerCase();
-  const isAdmin = role === 'admin';
   const isCustomer = role === 'customer';
   const isStaff = role === 'staff';
-  const items = isAdmin && inventoryItems.length === 0 ? demoInventoryItems : inventoryItems;
-  const bookings = isAdmin && bookingItems.length === 0 ? demoBookings : bookingItems;
-  const orders = isAdmin && orderItems.length === 0 ? demoOrders : orderItems;
-  const summary = isAdmin ? buildDemoSummary(items, bookings, orders) : dashboardSummary;
+  const items = inventoryItems;
+  const bookings = bookingItems;
+  const orders = orderItems;
+  const summary = dashboardSummary;
 
   useEffect(() => {
     dispatch(fetchInventory());

@@ -58,7 +58,12 @@ export const logoutUser = async () => {
 };
 
 export const sendRecoveryEmail = async (email) => {
-  await sendPasswordResetEmail(auth, email);
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+
+  await sendPasswordResetEmail(auth, normalizedEmail, {
+    url: `${window.location.origin}/login?passwordReset=success`,
+    handleCodeInApp: false,
+  });
 };
 
 export const watchAuthState = (callback) => onAuthStateChanged(auth, callback);

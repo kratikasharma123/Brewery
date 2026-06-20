@@ -52,9 +52,19 @@ const ForgotPassword = () => {
         )}
 
         {isSuccess && (
-          <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm flex items-center gap-3">
-            <CheckCircle2 className="h-5 w-5 shrink-0" />
-            <span>{message || 'Password reset email sent. Please check your inbox.'}</span>
+          <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm flex items-start gap-3">
+            <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5" />
+            <div>
+              <span>{message || 'Password reset email sent. Please check your inbox.'}</span>
+              <button
+                type="button"
+                onClick={onSubmit}
+                disabled={isLoading}
+                className="mt-3 block text-left text-xs font-extrabold uppercase tracking-wider text-emerald-200 underline-offset-4 transition hover:text-white hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Resend Email
+              </button>
+            </div>
           </div>
         )}
 

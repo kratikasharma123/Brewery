@@ -87,18 +87,7 @@ const Register = () => {
           setFormData({ name: '', email: '', password: '' });
           navigate(getDashboardPath(updatedUser), { replace: true });
         } catch {
-          try {
-            const demoEmail = email.replace('@', `+demo${Date.now()}@`);
-            const demoUser = await dispatch(register({ ...userData, email: demoEmail })).unwrap();
-            const selectedRoleDemoUser = demoUser.role === role
-              ? demoUser
-              : await dispatch(chooseRole(role)).unwrap();
-            dispatch(reset());
-            setFormData({ name: '', email: '', password: '' });
-            navigate(getDashboardPath(selectedRoleDemoUser), { replace: true });
-          } catch {
-            setRegisterNotice('Unable to create a demo account. Please use a different email.');
-          }
+          setRegisterNotice('This email is already registered. Please use the existing password or a different email.');
         }
       } else {
         setRegisterNotice(String(error));

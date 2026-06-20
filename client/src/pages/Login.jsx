@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { login, reset } from '../features/auth/authSlice';
-import { Beer, Mail, Lock, AlertCircle, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Beer, Mail, Lock, AlertCircle, Loader2, Eye, EyeOff, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { getDashboardPath } from '../utils/authRoutes';
 import { EMAIL_PATTERN, EMAIL_VALIDATION_MESSAGE } from '../utils/emailValidation';
 
@@ -16,7 +16,9 @@ const Login = () => {
   const { email, password } = formData;
 
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
+  const passwordResetSuccess = new URLSearchParams(location.search).get('passwordReset') === 'success';
 
   const { user, isLoading, isError, message } = useSelector(
     (state) => state.auth
@@ -64,22 +66,6 @@ const Login = () => {
     }
   };
 
-  const fillMockCredentials = (role) => {
-    switch (role) {
-      case 'admin':
-        setFormData({ email: 'admin@brewery.com', password: 'admin123' });
-        break;
-      case 'staff':
-        setFormData({ email: 'staff@brewery.com', password: 'staff123' });
-        break;
-      case 'customer':
-        setFormData({ email: 'customer@brewery.com', password: 'customer123' });
-        break;
-      default:
-        break;
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 p-6 relative overflow-hidden">
       {/* Background blobs for premium depth */}
@@ -113,6 +99,13 @@ const Login = () => {
           <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-3">
             <AlertCircle className="h-5 w-5 shrink-0" />
             <span>{message || 'Invalid credentials'}</span>
+          </div>
+        )}
+
+        {passwordResetSuccess && (
+          <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm flex items-center gap-3">
+            <CheckCircle2 className="h-5 w-5 shrink-0" />
+            <span>Password changed successfully. Please sign in with your new password.</span>
           </div>
         )}
 
@@ -194,33 +187,6 @@ const Login = () => {
             )}
           </button>
         </form>
-
-        {/* Mock Credentials Quick Fill */}
-        <div className="mt-8 pt-6 border-t border-slate-800/80">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest text-center mb-3">
-            Quick Fill Demo Accounts
-          </p>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              onClick={() => fillMockCredentials('admin')}
-              className="text-[10px] font-bold py-1.5 px-2 bg-slate-900 border border-slate-800 rounded-lg hover:border-amber-500/30 text-amber-400 hover:bg-amber-500/5 transition-all"
-            >
-              Admin
-            </button>
-            <button
-              onClick={() => fillMockCredentials('staff')}
-              className="text-[10px] font-bold py-1.5 px-2 bg-slate-900 border border-slate-800 rounded-lg hover:border-amber-500/30 text-amber-400 hover:bg-amber-500/5 transition-all"
-            >
-              Staff
-            </button>
-            <button
-              onClick={() => fillMockCredentials('customer')}
-              className="text-[10px] font-bold py-1.5 px-2 bg-slate-900 border border-slate-800 rounded-lg hover:border-amber-500/30 text-amber-400 hover:bg-amber-500/5 transition-all"
-            >
-              Customer
-            </button>
-          </div>
-        </div>
 
         <div className="mt-6 text-center">
           <p className="text-sm text-slate-400">
