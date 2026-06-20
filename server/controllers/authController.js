@@ -1,15 +1,89 @@
 import jwt from 'jsonwebtoken';
+import { adminAuth } from '../config/firebaseAdmin.js';
 import User from '../models/User.js';
 import { cleanString, isEmail, isPersonName, requireFields } from '../utils/validators.js';
 
-// Generate JWT token
+// Generate legacy JWT token for existing non-Firebase users
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   });
 };
 
-// @desc    Register a new user
+const getBearerToken = (req) => {
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    return req.headers.authorization.split(' ')[1];
+  }
+
+  return null;
+};
+
+const serializeUser = (user, token) => ({
+  _id: user._id,
+  firebaseUid: user.firebaseUid,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  token,
+});
+
+// @desc    Register or load a Firebase authenticated user profile
+// @route   POST /api/auth/firebase-sync
+// @access  Private via Firebase ID token
+export const syncFirebaseUser = async (req, res, next) => {
+  try {
+    if (!adminAuth) {
+      res.status(500);
+      throw new Error('Firebase Admin is not configured on the server');
+    }
+
+    const token = getBearerToken(req);
+    if (!token) {
+      res.status(401);
+      throw new Error('Firebase token is required');
+    }
+
+    const decoded = await adminAuth.verifyIdToken(token);
+    const email = decoded.email?.toLowerCase();
+
+    if (!email || !isEmail(email)) {
+      res.status(400);
+      throw new Error('Firebase account must include a valid email address');
+    }
+
+    const requestedRole = req.body.role ? cleanString(req.body.role) : undefined;
+    const allowedRoles = ['Admin', 'Customer'];
+
+    if (requestedRole && !allowedRoles.includes(requestedRole)) {
+      res.status(400);
+      throw new Error('Please select Admin or Customer');
+    }
+
+    let user = await User.findOne({
+      $or: [{ firebaseUid: decoded.uid }, { email }],
+    });
+
+    if (!user) {
+      user = await User.create({
+        firebaseUid: decoded.uid,
+        name: cleanString(req.body.name || decoded.name || email.split('@')[0]),
+        email,
+        role: requestedRole || 'Customer',
+      });
+    } else {
+      user.firebaseUid ||= decoded.uid;
+      if (req.body.name) user.name = cleanString(req.body.name);
+      if (requestedRole) user.role = requestedRole;
+      await user.save();
+    }
+
+    res.json(serializeUser(user, token));
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Register a new legacy user
 // @route   POST /api/auth/register
 // @access  Public
 export const registerUser = async (req, res, next) => {
@@ -55,13 +129,7 @@ export const registerUser = async (req, res, next) => {
     });
 
     if (user) {
-      res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        token: generateToken(user._id),
-      });
+      res.status(201).json(serializeUser(user, generateToken(user._id)));
     } else {
       res.status(400);
       throw new Error('Invalid user data');
@@ -94,19 +162,13 @@ export const chooseUserRole = async (req, res, next) => {
     user.role = role;
     await user.save();
 
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token: generateToken(user._id),
-    });
+    res.json(serializeUser(user, getBearerToken(req) || generateToken(user._id)));
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Authenticate user & get token
+// @desc    Authenticate legacy user & get token
 // @route   POST /api/auth/login
 // @access  Public
 export const loginUser = async (req, res, next) => {
@@ -120,13 +182,7 @@ export const loginUser = async (req, res, next) => {
     }).select('+password');
 
     if (user && (await user.matchPassword(password))) {
-      res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        token: generateToken(user._id),
-      });
+      res.json(serializeUser(user, generateToken(user._id)));
     } else {
       res.status(401);
       throw new Error('Invalid email or password');
@@ -136,7 +192,7 @@ export const loginUser = async (req, res, next) => {
   }
 };
 
-// @desc    Reset password with registered email
+// @desc    Reset password with registered email for legacy users
 // @route   POST /api/auth/forgot-password
 // @access  Public
 export const forgotPassword = async (req, res, next) => {
@@ -183,6 +239,7 @@ export const getUserProfile = async (req, res, next) => {
     if (user) {
       res.json({
         _id: user._id,
+        firebaseUid: user.firebaseUid,
         name: user.name,
         email: user.email,
         role: user.role,

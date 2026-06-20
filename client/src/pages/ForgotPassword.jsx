@@ -1,23 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { AlertCircle, Beer, CheckCircle2, Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { AlertCircle, Beer, CheckCircle2, Loader2, Mail } from 'lucide-react';
 import { forgotPassword, reset } from '../features/auth/authSlice';
 import { EMAIL_PATTERN, EMAIL_VALIDATION_MESSAGE } from '../utils/emailValidation';
 
 const ForgotPassword = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [localError, setLocalError] = useState('');
-
-  const { email, password, confirmPassword } = formData;
+  const [email, setEmail] = useState('');
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { isLoading, isError, isSuccess, message } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -26,27 +16,13 @@ const ForgotPassword = () => {
     };
   }, [dispatch]);
 
-  const onChange = (e) => {
-    setLocalError('');
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setLocalError('Passwords do not match');
-      return;
-    }
-
     try {
-      await dispatch(forgotPassword({ email, password })).unwrap();
-      setTimeout(() => navigate('/login'), 1200);
+      await dispatch(forgotPassword({ email })).unwrap();
     } catch {
-      // reset failure will be handled by auth state error display
+      // Firebase reset failure will be handled by auth state error display
     }
   };
 
@@ -64,21 +40,21 @@ const ForgotPassword = () => {
             Reset Password
           </h2>
           <p className="text-slate-400 text-sm">
-            Enter your registered email and create a new password.
+            Enter your registered email. Firebase will send a secure password recovery link.
           </p>
         </div>
 
-        {(isError || localError) && (
+        {isError && (
           <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-3">
             <AlertCircle className="h-5 w-5 shrink-0" />
-            <span>{localError || message || 'Password reset failed'}</span>
+            <span>{message || 'Password reset failed'}</span>
           </div>
         )}
 
         {isSuccess && (
           <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm flex items-center gap-3">
             <CheckCircle2 className="h-5 w-5 shrink-0" />
-            <span>{message || 'Password reset successfully. Redirecting to login...'}</span>
+            <span>{message || 'Password reset email sent. Please check your inbox.'}</span>
           </div>
         )}
 
@@ -94,7 +70,7 @@ const ForgotPassword = () => {
                 id="email"
                 name="email"
                 value={email}
-                onChange={onChange}
+                onChange={(event) => setEmail(event.target.value)}
                 required
                 pattern={EMAIL_PATTERN}
                 title={EMAIL_VALIDATION_MESSAGE}
@@ -102,62 +78,6 @@ const ForgotPassword = () => {
                 className="w-full pl-11 pr-4 py-3 rounded-xl glass-input text-sm"
                 placeholder="you@example.com"
               />
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-              New Password
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3.5 h-5 w-5 text-slate-500" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                name="password"
-                value={password}
-                onChange={onChange}
-                required
-                minLength={8}
-                className="w-full pl-11 pr-12 py-3 rounded-xl glass-input text-sm"
-                placeholder="Min 8 characters"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((current) => !current)}
-                className="absolute right-3 top-3.5 text-slate-500 hover:text-amber-400 transition-colors"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-              Confirm Password
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3.5 h-5 w-5 text-slate-500" />
-              <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                id="confirmPassword"
-                name="confirmPassword"
-                value={confirmPassword}
-                onChange={onChange}
-                required
-                minLength={8}
-                className="w-full pl-11 pr-12 py-3 rounded-xl glass-input text-sm"
-                placeholder="Repeat new password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword((current) => !current)}
-                className="absolute right-3 top-3.5 text-slate-500 hover:text-amber-400 transition-colors"
-                aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
-              >
-                {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
             </div>
           </div>
 
@@ -169,10 +89,10 @@ const ForgotPassword = () => {
             {isLoading ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
-                Resetting...
+                Sending Email...
               </>
             ) : (
-              'Reset Password'
+              'Send Recovery Email'
             )}
           </button>
         </form>

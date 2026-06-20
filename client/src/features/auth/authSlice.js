@@ -1,117 +1,92 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios, { apiUrl } from '../../utils/apiClient';
+import {
+  loginUser,
+  logoutUser,
+  registerUser,
+  sendRecoveryEmail,
+  syncUserWithBackend,
+} from '../../services/Auth';
 
-// Get user from localStorage
-const user = JSON.parse(localStorage.getItem('user'));
+const savedUser = JSON.parse(localStorage.getItem('user'));
 
 const initialState = {
-  user: user ? user : null,
+  user: savedUser || null,
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: '',
 };
 
-// Register user
+const getAuthErrorMessage = (error) => {
+  switch (error?.code) {
+    case 'auth/email-already-in-use':
+      return 'User already exists';
+    case 'auth/invalid-email':
+      return 'Please provide a valid email address';
+    case 'auth/weak-password':
+      return 'Password must be at least 6 characters';
+    case 'auth/invalid-credential':
+    case 'auth/user-not-found':
+    case 'auth/wrong-password':
+      return 'Invalid email or password';
+    default:
+      return error?.response?.data?.message || error?.message || error?.toString() || 'Authentication failed';
+  }
+};
+
+// Register user with Firebase Auth and sync MongoDB role/profile
 export const register = createAsyncThunk(
   'auth/register',
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post(apiUrl('/api/auth/register'), userData);
-      if (response.data) {
-        localStorage.setItem('user', JSON.stringify(response.data));
-      }
-      return response.data;
+      return await registerUser(userData);
     } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(getAuthErrorMessage(error));
     }
   }
 );
 
-// Choose user role after registration
+// Choose user role and persist it to MongoDB
 export const chooseRole = createAsyncThunk(
   'auth/chooseRole',
   async (role, thunkAPI) => {
-    const user = thunkAPI.getState().auth.user;
-
-    if (!user) {
-      return thunkAPI.rejectWithValue('Please register before choosing a role');
-    }
-
     try {
-      const response = await axios.patch(
-        apiUrl('/api/auth/role'),
-        { role },
-        { headers: { Authorization: `Bearer ${user.token}` } }
-      );
-
-      if (response.data) {
-        localStorage.setItem('user', JSON.stringify(response.data));
-      }
-
-      return response.data;
+      const currentUser = thunkAPI.getState().auth.user;
+      return await syncUserWithBackend({ name: currentUser?.name, role });
     } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        'Unable to save selected role. Please restart/deploy the backend and try again.';
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(getAuthErrorMessage(error));
     }
   }
 );
 
-// Login user
+// Login user with Firebase Auth and load MongoDB role/profile
 export const login = createAsyncThunk(
   'auth/login',
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post(apiUrl('/api/auth/login'), userData);
-      if (response.data) {
-        localStorage.setItem('user', JSON.stringify(response.data));
-      }
-      return response.data;
+      return await loginUser(userData);
     } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(getAuthErrorMessage(error));
     }
   }
 );
 
-// Reset password with registered email
+// Send Firebase password recovery email
 export const forgotPassword = createAsyncThunk(
   'auth/forgotPassword',
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post(apiUrl('/api/auth/forgot-password'), userData);
-      return response.data;
+      await sendRecoveryEmail(userData.email);
+      return { message: 'Password reset email sent. Please check your inbox.' };
     } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(getAuthErrorMessage(error));
     }
   }
 );
 
 // Logout user
 export const logout = createAsyncThunk('auth/logout', async () => {
-  localStorage.removeItem('user');
+  await logoutUser();
 });
 
 export const authSlice = createSlice({
@@ -124,12 +99,17 @@ export const authSlice = createSlice({
       state.isError = false;
       state.message = '';
     },
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
       // Register
       .addCase(register.pending, (state) => {
         state.isLoading = true;
+        state.isError = false;
+        state.message = '';
       })
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -163,6 +143,8 @@ export const authSlice = createSlice({
       // Login
       .addCase(login.pending, (state) => {
         state.isLoading = true;
+        state.isError = false;
+        state.message = '';
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -179,11 +161,13 @@ export const authSlice = createSlice({
       // Forgot password
       .addCase(forgotPassword.pending, (state) => {
         state.isLoading = true;
+        state.isError = false;
+        state.message = '';
       })
       .addCase(forgotPassword.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.message = action.payload?.message || 'Password reset successfully';
+        state.message = action.payload?.message || 'Password reset email sent. Please check your inbox.';
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.isLoading = false;
@@ -197,5 +181,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset, setUser } = authSlice.actions;
 export default authSlice.reducer;
